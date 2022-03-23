@@ -6,19 +6,20 @@ const nodemailer = require("nodemailer");
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
+    const  host  =  "testsmtp.fr"; //Simple mail transfer protocol adress
+    const  port=  587;
+    const  username=  "tes@gmail.com"; // username (souvent une adresse email)
+    const  password  =  "MotdePaaase"; // mot de passe
+    const  receiver  =  "receveur@gmail.com"; //personnes à qui envoyer le mail
+    const  sender  =  '"John doe" <JohnDoe@gmail.fr>';
+
+
     const objet = "RTX3060" //Nom de l'objet que vous voulez acheter
 
     //url du produit désiré
     const url = 'https://www.bestbuy.ca/fr-ca/produit/energizer-chargeur-maxi-d-energizer-avec-4-piles-rechargeables-aa-nimh-chvcmwb4-chvcmwb4/10135654';
 
-    const host = "smtpbv.univ-lyon1.fr"; //Simple mail transfer protocol adress
-    const port= 587;
-    const username= "p2001337"; // username (souvent une adresse email)
-    const password = "VroumVroum"; // mot de passe
-    const receiver = "arthaudmorin@gmail.com"; //personnes à qui envoyer le mail
-    const sender = '"Arthaud Morin" <arthaud.morin@etu.univ-lyon1.fr>';  
-
-    //sélécteur css du bouton de rupture de stock, si il est sur la page cela signiie que le produit n'est pas disponible
+    //sélécteur css du bouton de rupture de stock, si il est sur la page cela signifie que le produit n'est pas disponible
     const dispo = '#test > button[disabled]';
 
     //sélécteur css présent lorsque la page est chargée
