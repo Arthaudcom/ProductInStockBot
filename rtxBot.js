@@ -3,25 +3,34 @@ const fs = require('fs');
 const nodemailer = require("nodemailer");
 
 (async () => {
-    const browser = await puppeteer.launch({});
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
+
     //url du produit désiré
     const url = 'https://www.bestbuy.ca/fr-ca/produit/carte-graphique-avec-memoire-gddr6-de-8-go-geforce-rtx-3060-ti-de-nvidia/15166285';
 
-    await page.goto(url);  //navigue vers l'url
     //sélécteur css du bouton de rupture de stock, si il est sur la page cela signiie que le produit n'est pas disponible
     const dispo = '#test > button[disabled]';
-    const waiter = '#test > button';     //sélécteur css présent lorsque la page est chargée
+
+    //sélécteur css présent lorsque la page est chargée
+    const waiter = '#test > button';
+
+    await page.goto(url);  //navigue vers l'url
     let done = false;
     while (done == false){
+    console.log("reload");
     await page.reload();
+
+    console.log("waiting for selector");
     await page.waitForSelector(waiter); //attend que la page se charge
+
     if (await page.$(dispo) == null) {
         mail(url).catch(console.error);
          done = true;
     } else {
          console.log("produit indisponible") }
     }
+
     console.log('end of puppeteer job');
     await browser.close();
 })();
@@ -34,12 +43,12 @@ async function mail(url) {
 
     console.log("début de l'envoi du mail...")
     let transporter = nodemailer.createTransport({
-        host: "smtpbv.univ-lyon1.fr",
+        host: "smtpbv.univ-lyon1.fr", //Simple mail transfer protocol adress
         port: 587,
         secure: false, // true for 465, false nfor other ports
         auth: {
-            user: "p2001337", // generated user
-            pass: "VroumVroum", // generated password
+            user: "p2001337", // username (usually an email adress)
+            pass: "VroumVroum", // password
         },
     });
 
