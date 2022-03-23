@@ -9,17 +9,14 @@ const nodemailer = require("nodemailer");
     //url du produit désiré
     const url = 'https://www.bestbuy.ca/fr-ca/produit/energizer-chargeur-maxi-d-energizer-avec-4-piles-rechargeables-aa-nimh-chvcmwb4-chvcmwb4/10135654';
     await page.waitForTimeout(3000); //Vérifie si le bouton de rupture de stock apparaît sur la page
-    await page.screenshot({path: 'test.png'});
 
     await page.goto(url);  //navigue vers l'url
     //sélécteur css du bouton de rupture de stock, si il est sur la page cela signiie que le produit n'est pas disponible
     const dispo = '#test > button[disabled]';
-    //sélécteur css disponible lorsque la page est chargée
-    const waiter = '#test > button';
+    const waiter = '#test > button';     //sélécteur css présent lorsque la page est chargée
     await page.waitForSelector(waiter); //attend que la page se charge
-    //await page.waitForSelector(dispo, { timeout: 3000 }); //Vérifie si le bouton de rupture de stock apparaît sur la page
     if (await page.$(dispo) == null) {  //
-        mail().catch(console.error);
+        mail(url).catch(console.error);
     } else {
          console.log("produit indisponible") }
     console.log('end');
@@ -27,7 +24,7 @@ const nodemailer = require("nodemailer");
 })();
 
 // async..await is not allowed in global scope, must use a wrapper
-async function mail() {
+async function mail(url) {
 
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -45,8 +42,7 @@ async function mail() {
         from: '"Arthaud Morin" <arthaud.morin@etu.univ-lyon1.fr>', // sender address
         to: "arthaudmorin@gmail.com", // list of receivers
         subject: "!![AVAILABLE PRODUCT]!!", // Subject line
-        text: "https://www.bestbuy.ca/fr-ca/produit/energizer-chargeur-maxi-d-energizer-avec-4-piles-rechargeables-aa-nimh-chvcmwb4-chvcmwb4/10135654", // plain text body
-        html: "<b>Hello world?</b>", // html body
+        html: "<b>"+ url +"</b>", // html body
     });
 
     console.log("Message sent: %s", info.messageId);
