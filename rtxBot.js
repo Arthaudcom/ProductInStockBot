@@ -11,6 +11,13 @@ const nodemailer = require("nodemailer");
     //url du produit désiré
     const url = 'https://www.bestbuy.ca/fr-ca/produit/energizer-chargeur-maxi-d-energizer-avec-4-piles-rechargeables-aa-nimh-chvcmwb4-chvcmwb4/10135654';
 
+    const host = "smtpbv.univ-lyon1.fr"; //Simple mail transfer protocol adress
+    const port= 587;
+    const username= "p2001337"; // username (souvent une adresse email)
+    const password = "VroumVroum"; // mot de passe
+    const receiver = "arthaudmorin@gmail.com"; //personnes à qui envoyer le mail
+    const sender = '"Arthaud Morin" <arthaud.morin@etu.univ-lyon1.fr>';  
+
     //sélécteur css du bouton de rupture de stock, si il est sur la page cela signiie que le produit n'est pas disponible
     const dispo = '#test > button[disabled]';
 
@@ -28,7 +35,7 @@ const nodemailer = require("nodemailer");
     await page.waitForSelector(waiter); //attend que la page se charge
 
     if (await page.$(dispo) == null) {
-        mail(objet, url).catch(console.error);
+        mail(objet, url,host,port,username,password,receiver,sender).catch(console.error);
          done = true;
     } else {
          console.log("produit indisponible") }
@@ -43,24 +50,23 @@ const nodemailer = require("nodemailer");
  * @param {string} url lien vers la page du produit que l'on va envoyer dans le mail
  * @param {string} objet objet du mail
  */
-async function mail(objet,url) {
+async function mail(objet,url,host,port,username,password,receiver,sender) {
 
     console.log("début de l'envoi du mail...")
     let transporter = nodemailer.createTransport({
-        host: "smtpbv.univ-lyon1.fr", //Simple mail transfer protocol adress
-        port: 587,
+        host: host, 
+        port: port,
         secure: false, // true for 465, false nfor other ports
         auth: {
-            user: "p2001337", // username (usually an email adress)
-            pass: "Vroum Vroum", // password
+            user: username,
+            pass: password,
         },
     });
 
-    // send mail with defined transport object
     let info = await transporter.sendMail({
-        from: '"Arthaud Morin" <arthaud.morin@etu.univ-lyon1.fr>', // sender address
-        to: "arthaudmorin@gmail.com", // list of receivers
-        subject: "!!["+objet+" Disponible]!!", // Subject line
+        from: sender,
+        to: receiver,
+        subject: "!!["+objet+" Disponible]!!",
         html: "<b>"+ url +"</b>", 
     });
 
